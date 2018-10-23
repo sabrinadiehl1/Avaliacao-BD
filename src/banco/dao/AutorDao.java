@@ -8,19 +8,18 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import banco.modelo.Cliente;
+import banco.modelo.Autor;
 
-public class ClienteDao implements Dao<Cliente> {
+public class AutorDao implements Dao<Autor> {
 	
-	private static final String GET_BY_ID = "SELECT * FROM cliente WHERE id = ?";
-	private static final String GET_ALL = "SELECT * FROM cliente";
-	private static final String INSERT = "INSERT INTO cliente (nome, rg, cpf, endereco, telefone, renda_mensal) "
-			+ "VALUES (?, ?, ?, ?, ?, ?)";
-	private static final String UPDATE = "UPDATE cliente SET nome = ?, rg = ?, cpf = ?, "
-			+ "endereco = ?, telefone = ?, renda_mensal = ? WHERE id = ?";
-	private static final String DELETE = "DELETE FROM cliente WHERE id = ?";
+	private static final String GET_BY_ID = "SELECT * FROM autor WHERE id = ?";
+	private static final String GET_ALL = "SELECT * FROM autor";
+	private static final String INSERT = "INSERT INTO autor (nome, cpf) " + "VALUES (?, ?)";
+	private static final String UPDATE = "UPDATE autor SET nome = ?, cpf = ? WHERE id = ?";
+	private static final String DELETE = "DELETE FROM autor WHERE id = ?";
 	
-	public ClienteDao() {
+	
+	public AutorDao() {
 		try {
 			createTable();
 		} catch (SQLException e) {
@@ -30,19 +29,15 @@ public class ClienteDao implements Dao<Cliente> {
 	}
 	
 	private void createTable() throws SQLException {
-	    String sqlCreate = "CREATE TABLE IF NOT EXISTS cliente"
+	    String sqlCreate = "CREATE TABLE IF NOT EXISTS autor"
 	            + "  (id           INTEGER,"
 	            + "   nome            VARCHAR(50),"
-	            + "   rg	          BIGINT,"
 	            + "   cpf			  BIGINT,"
-	            + "   endereco           VARCHAR(255),"
-	            + "   telefone           BIGINT,"
-	            + "   renda_mensal       DOUBLE,"
 	            + "   PRIMARY KEY (id))";
 	    
 	    Connection conn = DbConnection.getConnection();
-
-
+	
+	    
 	    Statement stmt = conn.createStatement();
 	    stmt.execute(sqlCreate);
 	    
@@ -50,26 +45,22 @@ public class ClienteDao implements Dao<Cliente> {
 	}
 	
 	
-	private Cliente getClienteFromRS(ResultSet rs) throws SQLException
+	private Autor getAutorFromRS(ResultSet rs) throws SQLException
     {
-		Cliente cliente = new Cliente();
+		Autor autor = new Autor();
 			
-		cliente.setId( rs.getInt("id") );
-		cliente.setNome( rs.getString("nome") );
-		cliente.setRg( rs.getLong("rg") );
-		cliente.setCpf( rs.getLong("cpf") );
-		cliente.setEndereco( rs.getString("endereco") );
-		cliente.setTelefone( rs.getLong("telefone") );
-		cliente.setRendaMensal( rs.getDouble("renda_mensal") );
+		autor.setId( rs.getInt("id") );
+		autor.setNome( rs.getString("nome") );
+		autor.setCpf( rs.getLong("cpf") );
 	
-		return cliente;
+		return autor;
     }
 	
 	@Override
-	public Cliente getByKey(int id) {
+	public Autor getByKey(int id) {
 		Connection conn = DbConnection.getConnection();
 		
-		Cliente cliente = null;
+		Autor autor = null;
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
 		
@@ -79,22 +70,22 @@ public class ClienteDao implements Dao<Cliente> {
 			rs = stmt.executeQuery();
 			
 			if (rs.next()) {
-				cliente = getClienteFromRS(rs);
+				autor = getAutorFromRS(rs);
 			}
 		} catch (SQLException e) {
-			throw new RuntimeException("Erro ao obter cliente pela chave.", e);
+			throw new RuntimeException("Erro ao obter autor pela chave.", e);
 		} finally {
 			close(conn, stmt, rs);
 		}
 		
-		return cliente;
+		return autor;
 	}
 
 	@Override
-	public List<Cliente> getAll() {
+	public List<Autor> getAll() {
 		Connection conn = DbConnection.getConnection();
 		
-		List<Cliente> clientes = new ArrayList<>();
+		List<Autor> autors = new ArrayList<>();
 		Statement stmt = null;
 		ResultSet rs = null;
 		
@@ -104,41 +95,38 @@ public class ClienteDao implements Dao<Cliente> {
 			rs = stmt.executeQuery(GET_ALL);
 			
 			while (rs.next()) {
-				clientes.add(getClienteFromRS(rs));
+				autors.add(getAutorFromRS(rs));
 			}			
 			
 		} catch (SQLException e) {
-			throw new RuntimeException("Erro ao obter todos os clientes.", e);
+			throw new RuntimeException("Erro ao obter todos os autors.", e);
 		} finally {
 			close(conn, stmt, rs);
 		}
 		
-		return clientes;
+		return autors;
 	}
 
 	@Override
-	public void insert(Cliente cliente) {
+	public void insert(Autor autor) {
 		Connection conn = DbConnection.getConnection();
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
 		
 		try {
 			stmt = conn.prepareStatement(INSERT, Statement.RETURN_GENERATED_KEYS);
-			stmt.setString(1, cliente.getNome());
-			stmt.setLong(2, cliente.getRg());
-			stmt.setLong(3, cliente.getCpf());
-			stmt.setString(4, cliente.getEndereco());
-			stmt.setLong(5, cliente.getTelefone());
-			stmt.setDouble(6, cliente.getRendaMensal());
+			stmt.setString(1, autor.getNome());
+			stmt.setLong(2, autor.getCpf());
+			stmt.setInt(3, autor.getId());
 			
 			stmt.executeUpdate();
 			rs = stmt.getGeneratedKeys();
 			
 			if (rs.next()) {
-				cliente.setId(rs.getInt(1));
+				autor.setId(rs.getInt(1));
 			}
 		} catch (SQLException e) {
-			throw new RuntimeException("Erro ao inserir cliente.", e);
+			throw new RuntimeException("Erro ao inserir autor.", e);
 		}finally {
 			close(conn, stmt, rs);
 		}
@@ -157,31 +145,27 @@ public class ClienteDao implements Dao<Cliente> {
 			
 			stmt.executeUpdate();
 		} catch (SQLException e) {
-			throw new RuntimeException("Erro ao remover cliente.", e);
+			throw new RuntimeException("Erro ao remover autor.", e);
 		} finally {
 			close(conn, stmt, null);
 		}
 	}
 
 	@Override
-	public void update(Cliente cliente) {
+	public void update(Autor autor) {
 		Connection conn = DbConnection.getConnection();
 		PreparedStatement stmt = null;
 		
 		try {
 			stmt = conn.prepareStatement(UPDATE);
-			stmt.setString(1, cliente.getNome());
-			stmt.setLong(2, cliente.getRg());
-			stmt.setLong(3, cliente.getCpf());
-			stmt.setString(4, cliente.getEndereco());
-			stmt.setLong(5, cliente.getTelefone());
-			stmt.setDouble(6, cliente.getRendaMensal());
-			stmt.setInt(7, cliente.getId());
+			stmt.setString(1, autor.getNome());
+			stmt.setLong(2, autor.getCpf());
+			stmt.setInt(3, autor.getId());
 			
 			stmt.executeUpdate();
 			
 		} catch (SQLException e) {
-			throw new RuntimeException("Erro ao atualizar cliente.", e);
+			throw new RuntimeException("Erro ao atualizar autor.", e);
 		} finally {
 			close(conn, stmt, null);
 		}

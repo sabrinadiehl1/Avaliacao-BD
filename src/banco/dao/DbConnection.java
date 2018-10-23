@@ -10,10 +10,6 @@ public class DbConnection {
 	
 	private static Connection conn = null;
 	
-	/**
-	 * Obtém uma conexão com o banco
-	 * @return objeto Connection
-	 */
 	public static Connection getConnection() {
 		
 		try {
