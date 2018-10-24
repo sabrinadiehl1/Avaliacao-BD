@@ -15,8 +15,7 @@ public class LivroDao implements Dao<Livro> {
 	
 	private static final String GET_BY_ID = "SELECT * FROM livro NATURAL JOIN autor WHERE id = ?";
 	private static final String GET_ALL = "SELECT * FROM livro NATURAL JOIN autor";
-	private static final String INSERT = "INSERT INTO livro (titulo, anoPublicacao, editora, autor) "
-			+ "VALUES (?, ?, ?, ?)";
+	private static final String INSERT = "INSERT INTO livro (titulo, anoPublicacao, editora, autor_id) "+ "VALUES (?, ?, ?, ?)";
 	private static final String UPDATE = "UPDATE livro SET titulo = ?, anoPublicacao = ?, editora = ?, "
 			+ "autor_id = ? WHERE id = ?";
 	private static final String DELETE = "DELETE FROM livro WHERE id = ?";
@@ -125,7 +124,7 @@ public class LivroDao implements Dao<Livro> {
 			stmt.setString(1, livro.getTitulo());
 			stmt.setInt(2, livro.getAnoPublicacao());
 			stmt.setString(3, livro.getEditora());
-			stmt.setString(4, livro.getAutor().getNome());
+			stmt.setInt(4, livro.getAutor().getId());
 			
 			stmt.executeUpdate();
 			rs = stmt.getGeneratedKeys();
@@ -171,7 +170,7 @@ public class LivroDao implements Dao<Livro> {
 			stmt.setString(1, livro.getTitulo());
 			stmt.setInt(2, livro.getAnoPublicacao());
 			stmt.setString(3, livro.getEditora());
-			stmt.setString(4, livro.getAutor().getNome());
+			stmt.setInt(4, livro.getAutor().getId());
 			
 			stmt.executeUpdate();
 			

@@ -15,7 +15,7 @@ public class AutorDao implements Dao<Autor> {
 	private static final String GET_BY_ID = "SELECT * FROM autor WHERE id = ?";
 	private static final String GET_ALL = "SELECT * FROM autor";
 	private static final String INSERT = "INSERT INTO autor (nome, cpf) " + "VALUES (?, ?)";
-	private static final String UPDATE = "UPDATE autor SET nome = ?, cpf = ? WHERE id = ?";
+	private static final String UPDATE = "UPDATE autor SET nome = ?, cpf = ? WHERE id = ?";	
 	private static final String DELETE = "DELETE FROM autor WHERE id = ?";
 	
 	
@@ -99,7 +99,7 @@ public class AutorDao implements Dao<Autor> {
 			}			
 			
 		} catch (SQLException e) {
-			throw new RuntimeException("Erro ao obter todos os autors.", e);
+			throw new RuntimeException("Erro ao obter todos os autores.", e);
 		} finally {
 			close(conn, stmt, rs);
 		}
@@ -117,7 +117,7 @@ public class AutorDao implements Dao<Autor> {
 			stmt = conn.prepareStatement(INSERT, Statement.RETURN_GENERATED_KEYS);
 			stmt.setString(1, autor.getNome());
 			stmt.setLong(2, autor.getCpf());
-			stmt.setInt(3, autor.getId());
+
 			
 			stmt.executeUpdate();
 			rs = stmt.getGeneratedKeys();

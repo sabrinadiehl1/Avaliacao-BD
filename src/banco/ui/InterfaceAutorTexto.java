@@ -39,14 +39,14 @@ public class InterfaceAutorTexto extends InterfaceModeloTexto {
 
 	@Override
 	public void listarTodos() {
-		List<Autor> autors = dao.getAll();
+		List<Autor> autores = dao.getAll();
 		
-		System.out.println("Lista de autors");
+		System.out.println("Lista de autores");
 		System.out.println();
 		
 		System.out.println("id\tNome\tCPF");
 		
-		for (Autor autor : autors) {
+		for (Autor autor : autores) {
 			imprimeItem(autor);
 		}
 		
